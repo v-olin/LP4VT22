@@ -2,7 +2,8 @@
 Lecture notes, course documents and more for LP4 in TKDAT-2
 
 ## Lecture notes
-Notes are written in markdown in VSC
+Notes are written in markdown in VSC.
+
 If you want to read them properly, here are the VSC extensions I use:
 
 - General Markdown: [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one)
