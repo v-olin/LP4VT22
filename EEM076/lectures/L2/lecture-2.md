@@ -83,6 +83,10 @@ V_2 = i * R_2 = V_{total} * R_2/(R_1+R_2+R_3) \\
 V_3 = i * R_3 = V_{total} * R_3/(R_1+R_2+R_3)
 $$
 
-
-
 ### Current divider
+![Current divider](currdiv.png)
+
+$$
+R_{eq} = \frac{R_1*R_2}{R_1+R_2}
+V = i_{total} * R_{eq}
+$$
