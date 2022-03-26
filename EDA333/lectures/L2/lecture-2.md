@@ -3,7 +3,7 @@
 Basic layout of the MIPS processor
 ![mips-layout](mips-layout.png)
 
-### Funktionsanrop i MIPS
+## Funktionsanrop i MIPS
 C-kod: &lt;resultattyp&gt; funknamn (parametrar)
 
     int exempel (int g, h, i, j) {
@@ -21,7 +21,7 @@ Delsteg:
 6. Återställ ev. stacken
 7. Returnera till anropande kod
 
-**Registeranvändning**
+### Registeranvändning
 - \$a0 - \$a3: inparametrar (reg 4-7)
 - \$v0, \$v1: resultatvärden (reg 2 och 4)
 - \$t0 - \$t9: temporära variabler
@@ -33,7 +33,7 @@ Delsteg:
 - \$fp: "frame pointer" (reg 30)
 - \$ra_ "return address" (reg 31)
 
-**Proceduranrop**
+### Proceduranrop
 Procedur anrop: "jump and link"
 
     jal Label
@@ -74,7 +74,7 @@ MIPS-kod:
         addi    $sp, $sp, 4     # återställ $s0
         jr      $ra             # return
 
-**Procedurer som anropar andra procedurer**
+### Procedurer som anropar andra procedurer
 
 Anropande procedur måste spara på stacken:
 - Sin egna återhoppsadress
@@ -112,7 +112,9 @@ MIPS-kod:
         mul     $v0, $a0, $v0   # multiply to get result
         jr      $ra             # and return
 
-**Vad finns i minnet (MIPS)**
+## Minne i MIPS
+
+### Vad finns i minnet (MIPS)
 - **Text**: program kod
 - **Static data**: globala variabler
   - T.ex. statiska variabler i C, konstanta arrays och strings
@@ -123,7 +125,7 @@ MIPS-kod:
 
 ![minne](memory.png)
 
-**Lokala data på stacken**
+### Lokala data på stacken
 
 ![local](localdata.png)
 
@@ -132,7 +134,7 @@ MIPS-kod:
 - Procedure frame ("activation record")
   - Används av vissa kompilatorer för stackhantering
 
-**Operationer på mindre operander**
+### Operationer på mindre operander
 Mindre operander: byte/halfword
 
 MIPS byte/halfword load/store
@@ -148,7 +150,7 @@ MIPS byte/halfword load/store
 `sb  rt, offset(rs) / sh rt, offset(rs)`
 - Spara del av ord (MSB)
 
-**Strängkopiering**
+### Strängkopiering
 C-kod:
 
     void strcpy (char x[], char y[]) {
@@ -175,7 +177,7 @@ MIPS-kod:
         addi    $sp, $sp, 4         # adjust stack pointer
         jr      $ra                 # and return
 
-**Hantering av stora konstanter**
+### Hantering av stora konstanter
 - Många konstanter är små
   - 16-bitars immediate är ofta tillräckligt
 - Men, om fler än 16 bitar krävs: `lui rt, konstant`
@@ -188,7 +190,7 @@ MIPS-kod:
 `ori $s0, $s0, 2304`: 
 0000 0000 0111 1101 **0000 1001 0000 0000**
 
-**Hopp adressering (beq, bne)**
+## Hopp adressering (beq, bne)
 - Hoppinstruktioner specificerar:
   - Opkod, 2 register, branch offset
 - De flesta hopp i datorprogram är "nära" hopp
@@ -203,7 +205,7 @@ PC-relativ adressering:
 - PC pekar först på efterföljande instruktion (PC += 4)
 - Target address = PC + offset * 4
 
-**Längre hopp**
+### Längre hopp
 Hopp adress (**j** och **jal**) kan vara någonstans inom "text" segmentet.
 - (del av) hoppadressen kodas in i instruktionen (26 bits)
 
@@ -220,3 +222,187 @@ Loopkod xempel:
 
 ![asda](longjump.png)
 
+### Hoppa "långt" villkorligt
+
+Om hoppadressen kräver större offset än 16 bitar:
+- Assemblatorn kan då koda om
+
+Exempel:
+
+      beq \$s0, $s1, L1
+            |
+            V
+      bne \$s0, $s1, L2
+    L2: ...
+
+### Adresseringssätt i MIPS
+![adressering](adressing.png)
+
+### Assembler "Pseudo-instruktioner"
+- Assemblerinstruktionerna i MIPS motsvarar 1 maskininstruktion
+- Det finns även pseduoinstruktioner
+
+Exempel:
+`move  \$t0, \$t1`
+Motsvarar:
+`add \$t0, \$zero, $t1`
+
+Eller:
+`blt   \$t0, \$t1, L`
+
+Motsvarar:
+
+    slt \$at, \$t0, \$t0
+    bne \$at, \$zero, L
+
+`\$at`: assembler temporary
+
+**Sorteringsexempel i C**
+- Exemplifierar användning av assemblerinstruktioner i en C "bubbe sort" procedur
+- Vi behöver först definiera proceduren "Swap":
+
+    void swap(int v[], int k) {
+      int tmp;
+      tmp = v[k];
+      v[k] = v[k+1];
+      v[k+1] = tmp;
+    }
+- &v i \$a0, k i \$a1, tmp i \$t0
+
+Proceduren Swap:
+
+    swap: sll $t1, $a1, 2   # $t1 = k * 4
+          add $t1, $a0, $t1 # $t1 = &v + (k * 4) (address of v[k])
+          lw  $t0, 0($t1)   # $t0 (tmp) = v[k]
+          lw  $t2, 4($t1)   # $t2 = v[k+1]
+          sw  $t2, 0($t1)   # v[k] = $t2 (v[k+1])
+          sw  $t0, 4($t1)   # v[k+1] = $t0 (tmp)
+          jr  $ra           # return
+
+Sortering:
+
+    void sort(int v[], int n) {
+        int i, j;
+        for (i = 0; i < n; i++) {
+            for (j = i - 1; j >= 0 && v[j] > v[j+1]; j--) {
+                swap(v,j);
+            }
+        }
+    }
+
+I MIPS:
+![proc](procedure.png)
+
+Hela rutinen i MIPS:
+![rut](rutin.png)
+
+## Indexering vs Pekare
+Ex: `int A[] = {1,2,3,...}`
+- Vektor indexering kräver:
+  - Multiplikation av indexet med elementstorleken
+  - Summering av denna produkt till vektorns startadress
+- Pekare motsvarar direkt en minnesadress
+  - Kan medföra snabbare hantering av vektorer :)
+![pm](pm.png)
+
+Exempel: '0'-ställning av en vektor:
+![nollställning](nollning.png)
+
+**Jämförelse:**
+- `Clear 1` versionen kräver att * är inuti loopen
+  - Del av indexberäkningen
+  - Jämför det med inkrementering av pekare i `Clear 2`
+    - `Clear 1:` 6 instr per loop iteration
+    - `Clear 2:` 4 instr per loop iteration
+- Dock: ofta kan en kompilator nå samma effekt genom att använda pekare i assemblerkoden
+  - aka "*induction variable elimination*"
+  - Tips: koda med index och låt kompilatorn optimera med pekare. Gör koden mer lättläst och säkrare
+
+
+## Andra arkitekturer
+Andra arkitekturer (aka Instruction Set Architectures - ISAs)
+
+ARM arkitekturen
+- ARM: den mest använda processorkärnan idag (inbyggda syst.)
+- Liknande instruktionsuppbyggnad som i MIPS
+
+|                       | ARM          | MIPS         |
+| :-------------------- | :----------- | :----------- |
+| År                    | 1985         | 1985         |
+| Instruktionsbredd     | 32 bitar     | 32 bitar     |
+| Adressrymd            | 32 bitar     | 32 bitar     |
+| Data alignment        | Aligned      | Aligned      |
+| Data adresseringssätt | 9            | 3            |
+| Registerfil           | 15\*32-bit   | 31\*32-bit   |
+| I/O                   | Minnesmappad | Minnesmappad |
+
+Compare and branch i ARM
+- Använder flaggregister (CC) vid aritmetiska/logiska instruktioner
+  - Negative, zero, carry, overflow
+  - Compare instruktionerna som ett-/nollställer flaggorna
+- Varje instruktion kan exekveras villkorligt
+  - Höga 4 bitarna av instruktionsordet: condition value
+  - Kan därigenom undvika hopp över en enda instruktion
+
+Instruktionskodning i ARM/MIPS:
+![instrco](instrcode.png)
+
+### Intel x86 instruktioner
+- Evolution med bakåtkompatibilitet:
+  - 8080 (1974): 8-bitars mikroprocessor
+    - Ackumulatorregister, plus 3 index-register par
+  - 8086 (1978): 16-bitars utökning av 8080
+    - Complex instruction set (CISC)
+  - 8087 (1980): floating-point coprocessor
+    - Inkluderade FP instruktioner och en registerstack
+  - 80286 (1982): 24-bitars adresser, MMU
+    - Segmenterad minneshantering och minnesskydd
+  - 80386 (1985): 32-bitars utökning (nu: IA-32)
+    - Fler adresseringssätt och operationer
+    - Sidindelat och segmenterat minne
+  - i486 (1989): pipelinad, on-chip cache och FPU
+    - Kompatibla konkurrenter: AMD; Cyrix, ...
+  - Pentium (1993): superskalär, 64 bitars dataväg
+    - Senare versioner la till MMX (Multi-Media eXtension)
+    - Den (ö)kända *FDIV buggen*
+  - Pentium Pro (1995), Pentium II (1997)
+    - Ny mikroarkitektur
+  - Pentium III (1999)
+    - SSE (Streaming SIMD Extensions) och tillhörande register
+  - Pentium 4 (2001)
+    - Ny mikroarkitektur
+    - SSE2 instuktioner
+  - AMD64 (2003): utökad arkitektur till 64 bits
+  - EM64T - Extended Memory 64 Techonology (2004)
+    - AMD64 antagen av Intel
+    - SSE3 instruktioner
+  - Intel Core (2006)
+    - SSE4 instruktioner, stöd för VM
+  - AMD64 i 2007: SSE5 instruktioner
+    - Intel hängde inte på, istället så kom AVX
+  - AVX: Advanced Vector Extension (2008)
+    - Bredare SSE register, fler instruktioner
+  - Multicore...
+
+### Implementering av IA-32
+- Komplexa instruktioner -> Komplex implementering -> Sämre prestanda
+  - x86-processorn översätter dessa CISC-instruktioner till enklare mikrooperationer
+    - Enklare instruktioner: 1-1
+    - Mer komplexa instruktioner: 1-många mikroops
+  - Microengine liknande typisk RISC
+- Prestanda totalt ungefär som en ren RISC-arkitektur
+  - Kompilatorer brukar försöka att undvika de mest komplexa instruktionerna
+
+### Missuppfattningar:
+- Kraftfulla instruktioner => bättre prestanda?
+  - Kräver färre instruktioner
+  - MEN: kraftfulla instruktioner kräver komplex implementering
+    - Vilket gör **alla instruktioner långsamma**, även de enkla
+  - Kompilatorer är ofta bra på att göra snabb kod med enkla instruktioner
+- Använda assemblerkod för att få höga prestanda?
+  - Ibland, men dagens kompilatorer är bra på att optimera högnivåkod
+  - Fler kodrader => fler buggar och lägre produktivitet
+
+Fallgrop: Sekventiella ord i MIPS
+- Inkrementera med 4, inte 1!
+- MIPS använder byteadressering
