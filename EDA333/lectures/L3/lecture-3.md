@@ -177,12 +177,12 @@ Antag att signalfördröjningen är:
 - 200 ps för andra steg
 
 Jämför nu den pipelinade datavägen med icke-pipelinad
-Instr|Instr fetch|Register R|ALU op|Memory access|Register W|Total
-:-|:-|:-|:-|:-|:-|:-
-lw|200ps|100ps|200ps|200ps|100ps|800ps
-sw|200ps|100ps|200ps|200ps||700ps
-R-format|200ps|100ps|200ps||100ps|600ps
-beq|200ps|100ps|200ps|||500ps
+| Instr    | Instr fetch | Register R | ALU op | Memory access | Register W | Total |
+| :------- | :---------- | :--------- | :----- | :------------ | :--------- | :---- |
+| lw       | 200ps       | 100ps      | 200ps  | 200ps         | 100ps      | 800ps |
+| sw       | 200ps       | 100ps      | 200ps  | 200ps         |            | 700ps |
+| R-format | 200ps       | 100ps      | 200ps  |               | 100ps      | 600ps |
+| beq      | 200ps       | 100ps      | 200ps  |               |            | 500ps |
 
 ### Pipeline speedup
 Om alla pipe-steg är "balanserade" (alla steg tar lika lång tid)
