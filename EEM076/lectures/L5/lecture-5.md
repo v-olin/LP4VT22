@@ -74,7 +74,7 @@ $$
 \overrightharpoon{\tau}=\overrightharpoon{p}\times\overrightharpoon{E} \\
 \tau=p\cdot E \sin(\theta)
 $$
-(Torque wants to aling $\overrightharpoon{p}$ with $\overrightharpoon{E}$)
+(Torque wants to align $\overrightharpoon{p}$ with $\overrightharpoon{E}$)
 ![dip](dip.png)
 
 ## Electric flux

@@ -60,9 +60,56 @@ $$
 
 Equipotential curves show regions of constant potential.
 The electric field $\overrightharpoon{E}$ is perpendicular (normal) to these curves.
+![equ2](equ2.png)
+(Yellow: EF lines, Blue: EPC lines)
 
 ## Capacitance
+Capacitance is the ability for an electric potential to hold a charge.
+$$
+    C=\frac{Q}{|\Delta V|}
+$$
 
 ### Capacitors
+Two isolated plates with equal and opposite charges: $\plusmn Q$
+When charged, creates a voltage difference across the plates.
+What is the voltage?
 
-### Stored energy
+![plates](cond.png)
+
+Assume:
+Surface area $A$
+Surface charge density $\sigma$
+$
+    Q=\sigma A \\
+$
+
+![pillbox](pillbox.png)
+$$
+    \Phi=\oiint\overrightharpoon{E}\cdot d\overrightharpoon{A}=\frac{q_{enc}}{\varepsilon_0} \\
+    EA_1=\frac{Q}{\varepsilon_0}=\frac{\sigma A_1}{\varepsilon_0} \\
+    E=\frac{\sigma}{\varepsilon_0}=\frac{Q}{\varepsilon_0A}
+$$
+
+![2dplates](2d.png)
+$$
+    \Delta V=-\int_+^-\overrightharpoon{E}\cdot d\overrightharpoon{r}=-Ed \\
+    Ed=\frac{Q}{\varepsilon_0A}d \\
+    C=\frac{Q}{|\Delta V|}=\frac{Q}{\frac{Q}{\varepsilon_0A}d}=\varepsilon_0\frac{A}{d}
+$$
+
+### Stored energy in a capacitor
+![man](man.png)
+Recall:
+$$
+    \frac{W}{q}=-\int_A^B\overrightharpoon{E}\cdot d\overrightharpoon{s}=\Delta V \\
+    dW = dq\Delta V=dq\frac{q}{C} \\
+    W = \int dW=\frac{1}{C}\int_0^Qq\ dq=\frac{1}{C}\frac{Q^2}{2}
+$$
+
+How is the potential energy stored?
+$$
+    U=\frac{1}{C}\frac{Q^2}{2}=\frac{1}{2}Q|\Delta V|=\frac{1}{2}C|\Delta V|^2 \\
+    \frac{1}{2}C|\Delta V|^2 =\frac{1}{2}\frac{\varepsilon_0A}{d}(Ed)^2=
+    \frac{1}{2}\varepsilon_0E^2(Ad)=u x (volume) \\
+    u = (E\ field\ density)=\frac{\varepsilon_0E^2}{2}
+$$
